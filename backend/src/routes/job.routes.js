@@ -1,36 +1,56 @@
 const express = require("express");
-
 const router = express.Router();
 
 const auth = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 
 const {
-
     createJob,
     getAllJobs,
-    getJobById
-
+    getJobById,
+    updateJob,
+    deleteJob,
+    getMyJobs
 } = require("../controllers/job.controller");
 
-// Company Only
-router.post(
-    "/",
+
+// Public
+router.get("/", getAllJobs);
+
+// Company
+router.get(
+    "/company/my-jobs",
     auth,
     authorize("company"),
-    createJob
+    getMyJobs
 );
 
 // Public
-router.get(
-    "/",
-    getAllJobs
-);
 
-// Public
-router.get(
+router.get("/:id", getJobById);
+
+// Company Only
+router.post("/", auth, authorize("company"), createJob);
+
+router.put(
     "/:id",
-    getJobById
+    auth,
+    authorize("company"),
+    updateJob
+);
+
+router.delete(
+    "/:id",
+    auth,
+    authorize("company"),
+    deleteJob
+);
+
+router.get(
+    "/company/my-jobs",
+    auth,
+    authorize("company"),
+    getMyJobs
 );
 
 module.exports = router;

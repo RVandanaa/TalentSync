@@ -102,10 +102,108 @@ const getJobById = asyncHandler(async (req, res) => {
 
 });
 
-module.exports = {
 
+// ====================================
+// Update Job
+// ====================================
+
+const updateJob = asyncHandler(async (req, res) => {
+
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+        throw new ApiError(404, "Job not found");
+    }
+
+    // Only owner company can update
+    if (job.company.toString() !== req.user.id) {
+        throw new ApiError(403, "You are not allowed to update this job");
+    }
+
+    const allowedUpdates = [
+        "title",
+        "description",
+        "location",
+        "jobType",
+        "salary",
+        "requiredSkills",
+        "minimumCGPA",
+        "branch",
+        "applicationDeadline",
+        "maxApplicants",
+        "status"
+    ];
+
+    allowedUpdates.forEach((field) => {
+        if (req.body[field] !== undefined) {
+            job[field] = req.body[field];
+        }
+    });
+
+    await job.save();
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            "Job updated successfully",
+            job
+        )
+    );
+
+});
+
+// ====================================
+// Delete Job
+// ====================================
+
+const deleteJob = asyncHandler(async (req, res) => {
+
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+        throw new ApiError(404, "Job not found");
+    }
+
+    if (job.company.toString() !== req.user.id) {
+        throw new ApiError(403, "You are not allowed to delete this job");
+    }
+
+    await job.deleteOne();
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            "Job deleted successfully"
+        )
+    );
+
+});
+
+// ====================================
+// Get Logged-in Company's Jobs
+// ====================================
+
+const getMyJobs = asyncHandler(async (req, res) => {
+
+    const jobs = await Job.find({
+        company: req.user.id
+    }).populate("company", "companyName");
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            "Company jobs fetched successfully",
+            jobs
+        )
+    );
+
+});
+
+module.exports = {
     createJob,
     getAllJobs,
-    getJobById
-
+    getJobById,
+    updateJob,
+    deleteJob,
+    getMyJobs
 };
