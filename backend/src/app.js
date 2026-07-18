@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error.middleware");
+const authRoutes =require("./routes/auth.routes");
 
 const app = express();
 
@@ -29,6 +30,11 @@ app.get("/", (req, res) => {
         message: "InternLoom Backend Running"
     });
 });
+
+app.use(
+"/api/auth",
+authRoutes
+);
 
 app.use(errorHandler);
 
