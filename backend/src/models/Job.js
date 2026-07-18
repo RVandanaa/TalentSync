@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const jobSchema = new mongoose.Schema(
 {
+    title: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
-        required: true
-    },
-
-    title: {
-        type: String,
         required: true
     },
 
@@ -19,34 +19,57 @@ const jobSchema = new mongoose.Schema(
         required: true
     },
 
-    requiredSkills: [{
-        type: String
-    }],
-
-    preferredSkills: [{
-        type: String
-    }],
-
-    stipend: Number,
-
     location: {
         type: String,
-        enum: ["Remote","Hybrid","On-Site"]
+        required: true
     },
 
-    deadline: Date,
+    jobType: {
+        type: String,
+        enum: ["Internship", "Full-Time", "Part-Time"],
+        default: "Internship"
+    },
 
-    maxApplicants: Number,
+    salary: {
+        type: Number,
+        default: 0
+    },
 
-    currentApplicants: {
+    requiredSkills: [{
+        type: String,
+        trim: true
+    }],
+
+    minimumCGPA: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 10
+    },
+
+    branch: [{
+        type: String
+    }],
+
+    applicationDeadline: {
+        type: Date,
+        required: true
+    },
+
+    maxApplicants: {
+        type: Number,
+        default: 100
+    },
+
+    applicantsCount: {
         type: Number,
         default: 0
     },
 
     status: {
         type: String,
-        enum: ["Draft","Active","Closed"],
-        default: "Draft"
+        enum: ["Open", "Closed"],
+        default: "Open"
     }
 
 },
