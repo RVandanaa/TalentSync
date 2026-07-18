@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error.middleware");
 const authRoutes =require("./routes/auth.routes");
+const studentRoutes = require("./routes/student.routes");
 
 const app = express();
 
@@ -20,6 +21,14 @@ app.use(morgan("dev"));
 // Body Parser
 app.use(express.json());
 
+app.use(
+"/api/auth",
+authRoutes
+);
+app.use("/api/student", studentRoutes);
+
+
+
 // Cookie Parser
 app.use(cookieParser());
 
@@ -31,10 +40,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use(
-"/api/auth",
-authRoutes
-);
+
 
 app.use(errorHandler);
 

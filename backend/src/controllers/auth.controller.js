@@ -15,27 +15,31 @@ const {
 // Register Student
 // ===============================
 const registerStudent = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
 
-  const existingStudent = await Student.findOne({ email });
+    console.log("🔥 registerStudent called");
+    console.log("BODY:", req.body);
 
-  if (existingStudent) {
-    throw new ApiError(409, "Student already exists");
-  }
+    const { name, email, password } = req.body;
 
-  const student = await Student.create({
-    name,
-    email,
-    password,
-  });
+    const existingStudent = await Student.findOne({ email });
 
-  res.status(201).json(
-    new ApiResponse(201, "Student Registered Successfully", {
-      id: student._id,
-      name: student.name,
-      email: student.email,
-    })
-  );
+    if (existingStudent) {
+        throw new ApiError(409, "Student already exists");
+    }
+
+    const student = await Student.create({
+        name,
+        email,
+        password,
+    });
+
+    res.status(201).json(
+        new ApiResponse(201, "Student Registered Successfully", {
+            id: student._id,
+            name: student.name,
+            email: student.email,
+        })
+    );
 });
 
 // ===============================
