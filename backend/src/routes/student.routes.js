@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth.middleware");
+const authorize = require("../middleware/role.middleware");
 
 const {
     getProfile,
@@ -10,16 +11,36 @@ const {
     getDashboard
 } = require("../controllers/student.controller");
 
-// Get Profile
-router.get("/profile", auth, getProfile);
+// Student Profile
+router.get(
+    "/profile",
+    auth,
+    authorize("student"),
+    getProfile
+);
 
 // Update Profile
-router.put("/profile", auth, updateProfile);
+router.put(
+    "/profile",
+    auth,
+    authorize("student"),
+    updateProfile
+);
 
 // Profile Completeness
-router.get("/completeness", auth, getProfileCompleteness);
+router.get(
+    "/completeness",
+    auth,
+    authorize("student"),
+    getProfileCompleteness
+);
 
 // Dashboard
-router.get("/dashboard", auth, getDashboard);
+router.get(
+    "/dashboard",
+    auth,
+    authorize("student"),
+    getDashboard
+);
 
 module.exports = router;
