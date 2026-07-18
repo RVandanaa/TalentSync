@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error.middleware");
 const authRoutes =require("./routes/auth.routes");
 const studentRoutes = require("./routes/student.routes");
+const companyRoutes = require("./routes/company.routes");
+
 
 const app = express();
 
@@ -27,6 +29,7 @@ authRoutes
 );
 app.use("/api/student", studentRoutes);
 
+app.use("/api/company", companyRoutes);
 
 
 // Cookie Parser
