@@ -8,6 +8,8 @@ const authRoutes =require("./routes/auth.routes");
 const studentRoutes = require("./routes/student.routes");
 const companyRoutes = require("./routes/company.routes");
 const jobRoutes = require("./routes/job.routes");
+const applicationRoutes = require("./routes/application.routes");
+
 
 const app = express();
 
@@ -32,6 +34,8 @@ app.use("/api/student", studentRoutes);
 app.use("/api/company", companyRoutes);
 
 app.use("/api/jobs", jobRoutes);
+
+app.use("/api/applications", applicationRoutes);
 
 // Cookie Parser
 app.use(cookieParser());
