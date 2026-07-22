@@ -32,6 +32,7 @@ const applyJob = asyncHandler(async (req, res) => {
         throw new ApiError(400, "You have already applied for this job");
     }
 
+
     const application = await Application.create({
         student: req.user.id,
         company: job.company,
@@ -146,26 +147,66 @@ const getApplicants = asyncHandler(async (req, res) => {
 
 const updateApplicationStatus = asyncHandler(async (req, res) => {
 
-    const application = await Application.findById(req.params.id)
-        .populate("job");
+    const { status } = req.body;
+
+    const allowedStatuses = [
+        "Under Review",
+        "Shortlisted",
+        "Rejected",
+        "Offer Extended"
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+        throw new ApiError(400, "Invalid application status");
+    }
+
+    const application = await Application.findById(req.params.id);
 
     if (!application) {
         throw new ApiError(404, "Application not found");
     }
 
-    if (application.job.company.toString() !== req.user.id) {
-        throw new ApiError(403, "Access denied");
-    }
+   await application.populate("job");
 
-    application.status = req.body.status;
+if (application.job.company.toString() !== req.user.id) {
+    throw new ApiError(403, "Access denied");
+}
+
+    application.status = status;
 
     await application.save();
 
     res.status(200).json(
         new ApiResponse(
             200,
-            "Application status updated",
+            "Application status updated successfully",
             application
+        )
+    );
+
+});
+
+// ====================================
+// Company - Get All Applications
+// ====================================
+
+const getCompanyApplications = asyncHandler(async (req, res) => {
+
+    const jobs = await Job.find({ company: req.user.id }).select("_id");
+
+    const jobIds = jobs.map(job => job._id);
+
+    const applications = await Application.find({
+        job: { $in: jobIds }
+    })
+    .populate("student", "-password")
+    .populate("job", "title location jobType status");
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            "Company applications fetched successfully",
+            applications
         )
     );
 
@@ -176,5 +217,6 @@ module.exports = {
     getMyApplications,
     withdrawApplication,
     getApplicants,
-    updateApplicationStatus
+    updateApplicationStatus,
+    getCompanyApplications
 };

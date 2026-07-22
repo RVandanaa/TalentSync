@@ -9,7 +9,8 @@ const {
     getMyApplications,
     withdrawApplication,
     getApplicants,
-    updateApplicationStatus
+    updateApplicationStatus,
+    getCompanyApplications
 } = require("../controllers/application.controller");
 
 // Student
@@ -47,6 +48,13 @@ router.patch(
     auth,
     authorize("company"),
     updateApplicationStatus
+);
+
+router.get(
+    "/company",
+    auth,
+    authorize("company"),
+    getCompanyApplications
 );
 
 module.exports = router;
