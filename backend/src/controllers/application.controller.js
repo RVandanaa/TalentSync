@@ -5,6 +5,10 @@ const ApiResponse = require("../utils/ApiResponse");
 const ApiError = require("../utils/ApiError");
 const asyncHandler = require("../utils/asyncHandler");
 
+const Student = require("../models/Student");
+
+const calculateMatchScore =require("../utils/matching");
+
 // ====================================
 // Student Apply for Job
 // ====================================
@@ -33,11 +37,22 @@ const applyJob = asyncHandler(async (req, res) => {
     }
 
 
-    const application = await Application.create({
-        student: req.user.id,
-        company: job.company,
-        job: job._id
-    });
+    const student = await Student.findById(req.user.id);
+
+const matchScore =
+calculateMatchScore(student, job);
+
+const application = await Application.create({
+
+    student: req.user.id,
+
+    company: job.company,
+
+    job: job._id,
+
+    matchScore
+
+});
 
     job.applicantsCount += 1;
 
@@ -128,6 +143,9 @@ const getApplicants = asyncHandler(async (req, res) => {
     const applicants = await Application.find({
         job: job._id
     })
+    .sort({
+    matchScore:-1
+})
     .populate("student", "-password")
     .populate("job");
 

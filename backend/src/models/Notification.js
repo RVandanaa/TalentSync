@@ -1,27 +1,34 @@
 const mongoose = require("mongoose");
 
-const notificationSchema = new mongoose.Schema(
-{
+const notificationSchema = new mongoose.Schema({
 
-    receiverId: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
 
-    receiverType: {
+    role: {
         type: String,
-        enum: ["Student","Company"]
+        enum: ["student", "company"],
+        required: true
     },
 
-    message: String,
+    title: {
+        type: String,
+        required: true
+    },
 
-    read: {
+    message: {
+        type: String,
+        required: true
+    },
+
+    isRead: {
         type: Boolean,
         default: false
     }
 
-},
-{
+}, {
     timestamps: true
 });
 
