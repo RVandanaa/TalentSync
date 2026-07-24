@@ -8,6 +8,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const Student = require("../models/Student");
 
 const calculateMatchScore =require("../utils/matching");
+const createNotification = require("../utils/createNotification");
 
 // ====================================
 // Student Apply for Job
@@ -61,6 +62,13 @@ const application = await Application.create({
     }
 
     await job.save();
+
+    await createNotification(
+    job.company,
+    "company",
+    "New Job Application",
+    `${student.name} applied for ${job.title}`
+);
 
     res.status(201).json(
         new ApiResponse(
@@ -193,6 +201,13 @@ if (application.job.company.toString() !== req.user.id) {
     application.status = status;
 
     await application.save();
+
+    await createNotification(
+    application.student,
+    "student",
+    "Application Status Updated",
+    `Your application for ${application.job.title} is now ${status}`
+);
 
     res.status(200).json(
         new ApiResponse(
